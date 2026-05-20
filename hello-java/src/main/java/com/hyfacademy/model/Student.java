@@ -10,8 +10,8 @@ public class Student {
     private static int totalStudents;
 
     public Student(String name, String studentId) {
-        this.name = name;
-        this.studentId = studentId;
+        this.name = name.trim();
+        this.studentId = studentId.trim();
         this.grades = new int[] { 0, 0, 0, 0, 0 };
         totalStudents++;
     }

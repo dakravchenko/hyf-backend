@@ -11,6 +11,10 @@ public class GradeUtils {
             "Arrays & Collections", "Input & Output" };
 
     public static double calculateAverage(int[] grades) {
+        if (grades == null || grades.length == 0) {
+            return 0.0;
+        }
+
         int sum = 0;
         for (int grade : grades) {
             sum += grade;

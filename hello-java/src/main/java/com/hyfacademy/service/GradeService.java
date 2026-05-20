@@ -31,53 +31,77 @@ public class GradeService {
             return;
         } else {
             System.out.println("enter a student's name");
-            String name = scanner.nextLine();
+            String name = scanner.nextLine().trim();
 
-            Student student = new Student(name, String.format("HYF-%03d", studentCount++));
-            students[studentCount - 1] = student;
+            if (name.isEmpty()) {
+                System.out.println("student name cannot be empty");
+                return;
+            }
+
+            Student student = new Student(name, String.format("HYF-%03d", studentCount + 1));
+            students[studentCount] = student;
+            studentCount++;
             return;
-
         }
-
     }
 
     public void enterGrades() {
         System.out.println("select student's id");
-        String id = scanner.nextLine();
-        Student selectedStudent = findStudentById(id.toLowerCase());
+        String id = scanner.nextLine().trim();
+        Student selectedStudent = findStudentById(id);
+
         if (selectedStudent == null) {
             System.out.println("there is no such a student");
             return;
         } else {
             for (int i = 0; i < GradeUtils.MODULE_COUNT; i++) {
-                System.out.printf("Enter score for module: %s", GradeUtils.MODULE_NAMES[i]);
-                int score = scanner.nextInt();
+                int score;
+
+                while (true) {
+                    System.out.printf("Enter score for module: %s%n", GradeUtils.MODULE_NAMES[i]);
+
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("invalid input, please enter a number between 0 and 100");
+                        scanner.nextLine();
+                        continue;
+                    }
+
+                    score = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (score < 0 || score > 100) {
+                        System.out.println("invalid grade, please enter a value between 0 and 100");
+                        continue;
+                    }
+
+                    break;
+                }
+
                 selectedStudent.setGrade(i, score);
             }
-            scanner.nextLine();
             return;
         }
     }
 
     private Student findStudentById(String id) {
-        Student selectedStudent = null;
+        String trimmedId = id.trim();
+
         for (Student student : students) {
             if (student == null) {
                 break;
             }
-            if (student.getStudentId().toLowerCase().equals(id)) {
-                selectedStudent = student;
-                break;
+            if (student.getStudentId().trim().equalsIgnoreCase(trimmedId)) {
+                return student;
             }
         }
-        return selectedStudent;
-
+        return null;
     }
 
     public void viewStudentReport() {
         System.out.println("select student's id");
-        String id = scanner.nextLine();
-        Student selectedStudent = findStudentById(id.toLowerCase());
+        String id = scanner.nextLine().trim();
+        Student selectedStudent = findStudentById(id);
+
         if (selectedStudent == null) {
             System.out.println("there is no such a student");
             return;
@@ -93,8 +117,8 @@ public class GradeService {
                         result ? "PASS" : "FAIL");
             }
             System.out.printf("Average: %.2f%n", average);
-            System.out.printf("Grade: %s", GradeUtils.getLetterGrade(average));
-            System.out.printf("Status : %s", GradeUtils.isPassing(average) ? "PASS" : "FAIL");
+            System.out.printf("Grade: %s%n", GradeUtils.getLetterGrade(average));
+            System.out.printf("Status : %s%n", GradeUtils.isPassing(average) ? "PASS" : "FAIL");
             return;
         }
     }
@@ -117,11 +141,10 @@ public class GradeService {
 
                 System.out.println(student.toString());
             }
-            System.out.printf("Total students: %d Passing: %d   Failing: %d ", studentCount, countPass,
+            System.out.printf("Total students: %d Passing: %d   Failing: %d%n", studentCount, countPass,
                     studentCount - countPass);
             return;
         }
-
     }
 
     public void run() {
@@ -157,5 +180,4 @@ public class GradeService {
             }
         }
     }
-
 }
