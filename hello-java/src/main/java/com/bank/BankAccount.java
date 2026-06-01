@@ -1,42 +1,68 @@
 package com.bank;
 
+import com.bank.exception.AccountNotFoundException;
+import com.bank.exception.InsufficientFundsException;
+import com.bank.exception.TransactionLimitException;
+
 public class BankAccount {
-    private double balance;
-    private String owner;
-    private int pin;
+    private double balance = 2200;
+    private String accountId;
+    private double dailyWithdrawnAmount;
+    public static final double DAILY_LIMIT = 2000.00;
 
-    public BankAccount(String owner, int pin) {
-        setOwner(owner);
-        this.pin = pin;
+    public BankAccount(String accountId, double balance, double dailyWithdrawnAmount) {
+        this.accountId = accountId;
+        this.balance = balance;
+        this.dailyWithdrawnAmount = dailyWithdrawnAmount;
     }
 
-    public void withdraw(double amount) {
-        if(this.balance - amount >= 0){
-            this.balance = this.balance - amount;
-        } else {
-            System.out.println("not enough money");
-        }
-        
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setOwner(String owner){
-        if(owner == null || owner.equals("")){
-            System.out.println("owner not valid");
-        } else {
-            this.owner = owner;
-        }
-
+    public double getBalance() {
+        return balance;
     }
 
-    public void setPin(int pin){
-        String stringifiedPin = Integer.toString(pin);
+    public double getDailyWithdrawnAmount() {
+        return dailyWithdrawnAmount;
+    }
 
-        if(stringifiedPin == null || stringifiedPin.length() != 4){
-            System.out.println("must consist of 4 digits");
+    public static double getDailyLimit() {
+        return DAILY_LIMIT;
+    }
+
+    public void deposit(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
         } else {
-            this.pin = pin;
+            balance += amount;
         }
     }
 
-    
+    public void withdraw(double amount) throws InsufficientFundsException, TransactionLimitException {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        } else if (amount > balance) {
+            throw new InsufficientFundsException(balance, amount);
+        } else if (dailyWithdrawnAmount + amount > DAILY_LIMIT) {
+            throw new TransactionLimitException(amount, DAILY_LIMIT);
+        } else {
+            balance -= amount;
+            dailyWithdrawnAmount += amount;
+        }
+    }
+
+    public void transfer(BankAccount target, double amount)
+            throws AccountNotFoundException, InsufficientFundsException {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        } else if (target == null) {
+            throw new AccountNotFoundException(null);
+        } else if (amount > balance) {
+            throw new InsufficientFundsException(balance, amount);
+        } else {
+            balance -= amount;
+        }
+    }
 }

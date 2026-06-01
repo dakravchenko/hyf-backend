@@ -1,22 +1,31 @@
 package com.school.model;
 
 public class Student {
-    private String name;
-    private int studentId;
-    private double gpa;
+    private String studentId;
+    private int[] grades;
 
-    public Student(String name, int id, double gpa) {
-        this.name = name;
-        this.studentId = id;
-        this.gpa = gpa;
+    public Student(String studentId, int moduleCount) {
+        this.studentId = studentId;
+        this.grades = new int[moduleCount];
 
+        for (int i = 0; i < grades.length; i++) {
+            grades[i] = -1; // not graded yet
+        }
     }
 
-    public String getName() {
-        return this.name;
+    public String getStudentId() {
+        return studentId;
     }
 
-    public double getGpa() {
-        return this.gpa;
+    public int[] getGrades() {
+        return grades;
+    }
+
+    public int getGrade(int moduleIndex) {
+        return grades[moduleIndex];
+    }
+
+    public void setGrade(int moduleIndex, int grade) {
+        grades[moduleIndex] = grade;
     }
 }
