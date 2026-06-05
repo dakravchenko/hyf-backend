@@ -63,6 +63,8 @@ public class BankAccount {
             throw new InsufficientFundsException(balance, amount);
         } else {
             balance -= amount;
+            balance -= amount;
+            target.deposit(amount);
         }
     }
 }
